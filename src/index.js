@@ -53,9 +53,15 @@ export default declare(({
         throw new Error(`File path does not exist: ${importPath}`);
       }
       const rawSource = readFileSync(svgPath, 'utf8');
+      const mergedOpts = state.opts.svgo || { plugins: [] };
+      mergedOpts.plugins.push({
+        cleanupIDs: {
+          prefix: `${String(Math.random().toString(36).substring(2, 15))}-`,
+        },
+      });
       const optimizedSource = state.opts.svgo === false
         ? rawSource
-        : optimize(rawSource, state.opts.svgo);
+        : optimize(rawSource, mergedOpts);
 
       const escapeSvgSource = escapeBraces(optimizedSource);
 
